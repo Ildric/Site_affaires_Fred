@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Panier | Les petites affaires de Fred</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Styles légers ajoutés pour améliorer la lisibilité du tableau */
+        .cart-table th, .cart-table td {
+            padding: 12px 10px;
+            vertical-align: middle;
+        }
+        .btn-qty {
+            display: inline-block;
+            padding: 2px 8px;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin: 0 2px;
+        }
+        .btn-qty:hover {
+            background-color: #e5e7eb;
+        }
+        .btn-remove {
+            color: #ef4444;
+            text-decoration: none;
+            margin-left: 8px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero" style="padding: 40px 20px;">
+        <div class="hero-content">
+            <h1>🛒 Votre Panier</h1>
+            <p><a href="{{ url_for('index') }}" style="color: white; text-decoration: underline;">← Retour à la boutique</a></p>
+        </div>
+    </header>
+
+    <main class="container" style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
+
+        {% if not items %}
+            <div style="text-align: center; padding: 50px 0;">
+                <h2>Votre panier est vide 🧶</h2>
+                <p>Découvrez nos créations uniques et ajoutez-en à votre panier !</p>
+                <br>
+                <a href="{{ url_for('index') }}" class="btn-primary" style="display: inline-block; padding: 12px 24px; text-decoration: none;">Voir le catalogue</a>
+            </div>
+        {% else %}
+
+            <!-- Table du Récapitulatif -->
+            <section style="margin-bottom: 40px;">
+                <h2>Récapitulatif de la commande</h2>
+                <table class="cart-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #ddd; text-align: left;">
+                            <th>Article</th>
+                            <th style="text-align: right;">Prix unitaire</th>
+                            <th style="text-align: center;">Quantité</th>
+                            <th style="text-align: right;">Sous-total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <!-- Titre + Image (UX Améliorée) -->
+                            <td style="display: flex; align-items: center; gap: 12px; font-weight: 500;">
+                                {% if item['image_url'] %}
+                                    <img src="{{ item['image_url'] }}" alt="{{ item['title'] }}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px;">
+                                {% endif %}
+                                <span>{{ item['title'] }}</span>
+                            </td>
+
+                            <td style="text-align: right;">{{ "%.2f"|format(item['price']) }} €</td>
+
+                            <!-- Actions de Quantité (+ / - / Supprimer) -->
+                            <td style="text-align: center; white-space: nowrap;">
+                                <a href="{{ url_for('retirer_du_panier', product_id=item['id']) }}" class="btn-qty" title="Diminuer">➖</a>
+                                <span style="font-weight: 600; padding: 0 4px;">{{ item['quantite'] }}</span>
+                                <a href="{{ url_for('ajouter_au_panier', product_id=item['id']) }}" class="btn-qty" title="Augmenter">➕</a>
+                            </td>
+
+                            <td style="text-align: right; font-weight: bold;">{{ "%.2f"|format(item['sous_total']) }} €</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div style="text-align: right; margin-top: 25px; font-size: 1.4rem;">
+                    <strong>Total à régler : <span style="color: #d97706;">{{ "%.2f"|format(total) }} €</span></strong>
+                </div>
+            </section>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
+
+            <!-- Formulaire de Validation (Balise <form> corrigée) -->
+            <section>
+                <h2>Coordonnées de livraison & réservation</h2>
+                <p style="color: #666; margin-bottom: 20px;">
+                    Remplissez vos informations ci-dessous. Fred recevra votre commande par e-mail et vous recontactera rapidement pour valider le paiement (virement, PayPal ou chèque).
+                </p>
+
+                <!-- ✅ Balise <form> rétablie correctement -->
+                <form action="https://formspree.io/f/mvkpokpz" method="POST" style="display: flex; flex-direction: column; gap: 15px; max-width: 600px;">
+
+                    <div>
+                        <label style="display: block; font-weight: 500; margin-bottom: 5px;">Nom et Prénom *</label>
+                        <input type="text" name="Nom" required placeholder="ex: Marie Dupont" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: 500; margin-bottom: 5px;">Adresse E-mail *</label>
+                        <input type="email" name="Email" required placeholder="ex: marie@example.com" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: 500; margin-bottom: 5px;">Numéro de Téléphone *</label>
+                        <input type="tel" name="Telephone" required placeholder="ex: 06 12 34 56 78" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: 500; margin-bottom: 5px;">Adresse de livraison complète *</label>
+                        <textarea name="Adresse" required rows="3" placeholder="Numéro, rue, code postal, ville" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;"></textarea>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-weight: 500; margin-bottom: 5px;">Mot ou précision (optionnel)</label>
+                        <textarea name="Message" rows="2" placeholder="Couleur souhaitée, instructions spéciales..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;"></textarea>
+                    </div>
+
+                    <!-- Champs cachés transmis à Formspree -->
+                    <input type="hidden" name="Récapitulatif Commande" value="{% for item in items %}{{ item['quantite'] }}x {{ item['title'] }} ({{ "%.2f"|format(item['sous_total']) }}€) | {% endfor %}">
+                    <input type="hidden" name="Total Commande" value="{{ "%.2f"|format(total) }} €">
+
+                    <button type="submit" class="btn-primary" style="padding: 15px; font-size: 1.1rem; cursor: pointer; border: none; margin-top: 10px;">
+                        ✉️ Valider et envoyer la commande
+                    </button>
+                </form>
+            </section>
+
+        {% endif %}
+
+    </main>
+
+    <footer style="text-align: center; padding: 20px; border-top: 1px solid #eee; margin-top: 40px; color: #777;">
+        <p>© 2026 Les petites affaires de Fred — Créations uniques au crochet & couture</p>
+    </footer>
+
+</body>
+</html>

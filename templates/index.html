@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les petites affaires de Fred | Créations Fait-Main</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header class="hero">
+        <div class="hero-content">
+            <span class="badge-hero">🧵 Confection Artisanale</span>
+            <h1>Les petites affaires de Fred</h1>
+            <p>Découvrez des pièces uniques en crochet et couture, confectionnées avec amour et attention aux détails.</p>
+        </div>
+
+        <a href="{{ url_for('afficher_panier') }}" class="cart-badge-hero" style="text-decoration: none;">
+            🛒 Panier : <strong>{{ total_articles }}</strong> article{% if total_articles > 1 %}s{% endif %}
+        </a>
+    </header>
+
+    <main class="container">
+        <section class="catalog-header">
+            <h2>Notre Collection</h2>
+            <span class="product-count">{{ products|length }} création{% if products|length > 1 %}s{% endif %} disponible{% if products|length > 1 %}s{% endif %}</span>
+        </section>
+
+        <div class="product-grid">
+            {% for product in products %}
+            <article class="card">
+                <div class="card-image-wrapper">
+                    {% if product['category'] %}
+                    <span class="badge-category">{{ product['category'] }}</span>
+                    {% endif %}
+
+                    {% if product['image_url'] %}
+                    <img src="{{ product['image_url'] }}" alt="{{ product['title'] }}" class="card-img" loading="lazy">
+                    {% else %}
+                    <div class="product-image-placeholder">
+                        <span class="placeholder-icon">🧶</span>
+                        <span>Fait main</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-body">
+                    <h3 class="card-title">{{ product['title'] }}</h3>
+                    <p class="card-description">{{ product['description'] }}</p>
+
+                    <div class="card-footer">
+                        <div class="price-container">
+                            <span class="price-label">Prix</span>
+                            <span class="price">{{ "%.2f"|format(product['price']) }} €</span>
+                        </div>
+                        
+                        <a href="{{ url_for('ajouter_au_panier', product_id=product['id']) }}" class="btn-primary">
+                            <span>Commander</span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Les petites affaires de Fred — Créations uniques au crochet & couture</p>
+    </footer>
+
+</body>
+</html>
