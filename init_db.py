@@ -27,7 +27,6 @@ produits_test = [
     ('Petits poissons', 'Crochet', 15.00, 'Fait main avec amour', 'static/images/IMG_20260628_141650.jpg'),
     ('Petite tortue', 'Crochet', 12.00, 'Fait main avec amour', 'static/images/IMG_20260628_141707.jpg'),
     ('Elephant en salopette', 'Crochet', 15.00, 'Fait main avec amour', 'static/images/IMG_20260628_141852.jpg'),
-    ('Ecureuil', 'Crochet', 15.00, 'Fait main avec amour', 'static/images/IMG_20260628_141907.jpg'),
     ('Poule de Pâques', 'Crochet', 15.00, 'Fait main avec amour', 'static/images/IMG_20260628_141924.jpg'),
     ('Petite poupée et son panier', 'Crochet', 10.00, 'Fait main avec amour', 'static/images/IMG_20260628_142013.jpg'),
     ('Hérisson', 'Crochet', 20.00, 'Fait main avec amour', 'static/images/IMG_20260628_143106.jpg'),
